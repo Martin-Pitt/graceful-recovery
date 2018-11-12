@@ -4,7 +4,7 @@ The `graceful-recovery` module is designed with Node.js servers in mind that nee
 
 This is an abstraction library around [`async-exit-hook`](https://www.npmjs.com/package/async-exit-hook) that provides mechanisms for storing and recovering application state.
 
-The state is wrapped in a JSON session object and
+The state is wrapped in a JSON session object, see [Session JSON Structure](#session-json-structure).
 
 You can design your own constraints as to whether to use the recovered data. If the data is particularly out of data or if part of it is still useful. For example I've used it in a meeting room system to recover the known room configurations, and also use Outlook calendar data if it is recent enough.
 
