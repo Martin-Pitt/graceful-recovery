@@ -124,6 +124,20 @@ The `session` object stored on disk and as returned by the recovery callback tak
 ```
 {
 	"meta": {
+		"at": Number, // Timestamp in milliseconds
+		"reason": "shutdown" || "autosave" || "uncaught-exception"
+	},
+	"state": ‹value› || [‹value›, …] // Any value returned by snapshot or array of values for multiple snapshot handlers
+}
+```
+
+
+
+For example if a `{ foo: 'bar.‹random number›' }` snapshot was given to the module during a shutdown:
+
+```
+{
+	"meta": {
 		"at": 1542039520366,
 		"reason": "shutdown"
 	},
