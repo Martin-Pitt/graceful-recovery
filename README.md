@@ -60,7 +60,8 @@ The `GracefulRecovery` class can be instantiated with an optional `options` obje
 
 * `options.path`: `String` – Path to store the session JSON in. By default this is set to `session.json` which stores it in that file on the current directory.
 * `options.autosave`: `Number` – Time in milliseconds to automatically take a snapshot and dump to disk. By default this is every 5 minutes (`5 * 60 * 1000`).
-* `options.catchExceptions`: `Boolean`– Catch any uncaught exceptions and shutdown gracefully. Enabled by default. See: https://nodejs.org/api/process.html#process_warning_using_uncaughtexception_correctly – NOTE: Application state may be in an undefined state at this point, use this if you can be sure you can take a snapshot that you could recover from. You can use the snapshot handler's `reason` parameter of `uncaught-exception` to make a decision on critical or safe data you want to store.
+* `options.catchExceptions`: `Boolean` – Whether to catch any uncaught exceptions that would have shutdown the process. Enabled by default. See: https://nodejs.org/api/process.html#process_warning_using_uncaughtexception_correctly – NOTE: Application state may be in an undefined state at this point, use this if you can be sure you can take a snapshot that you could recover from. You can use the snapshot handler's `reason` parameter of `uncaught-exception` to make a decision on critical or safe data you want to store.
+* `options.exitExceptions`: `Boolean` – per the above, whether to actually exit the process ourselves once we have dumped a session to disk. Enabled by default.
 
 
 ### registerSnapshot
@@ -126,11 +127,17 @@ The `session` object stored on disk and as returned by the recovery callback tak
 	"meta": {
 		"at": Number, // Timestamp in milliseconds
 		"reason": "shutdown" || "autosave" || "uncaught-exception"
+		"error"?: {
+			"stack": "Error: oops at somewhere.js",
+			"message": "oops"
+		}
 	},
 	"state": ‹value› || [‹value›, …] // Any value returned by snapshot or array of values for multiple snapshot handlers
 }
 ```
 
+If the reason was an uncaught-exception the error will be passed along to the `meta.error`.
+Which you could report the next restart if you wanted to.
 
 
 For example if a `{ foo: 'bar.‹random number›' }` snapshot was given to the module during a shutdown:
@@ -146,6 +153,24 @@ For example if a `{ foo: 'bar.‹random number›' }` snapshot was given to the 
 	}
 }
 ```
+
+Or due to an uncaught exception:
+```
+{
+	"meta": {
+		"at": 1542117121167,
+		"reason": "uncaught-exception",
+		"error": {
+			"stack": "Error: oops\n    at Timeout.setTimeout [as _onTimeout] (/path/to/script.js:10:8)\n    at listOnTimeout (timers.js:324:15)\n    at processTimers (timers.js:268:5)",
+			"message": "oops"
+		}
+	},
+	"state": {
+		"foo": "bar.0.13781564326899165"
+	}
+}
+```
+
 
 * `meta` contains `graceful-recovery`-specific data
 * `meta.at` is the timestamp in milliseconds when the session was saved at
