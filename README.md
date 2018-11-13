@@ -54,7 +54,7 @@ graceful.recovery(session => {
 
 ## API
 
-### Constructor
+### Constructor
 
 The `GracefulRecovery` class can be instantiated with an optional `options` object:
 
@@ -97,7 +97,7 @@ graceful.registerSnapshot(async (reason) => {
 
 * `shutdown` – per [`async-exit-hook`](https://www.npmjs.com/package/async-exit-hook) this combines multiple shutdown signals to catch all the ways a process can exit
 * `autosave` – the `graceful-recovery` module initiated an autosave (see `options.autosave`)
-* `uncaught-exception` – the `graceful-recovery` module caught an exception that was not handled, giving you can option to store a snapshot before shutting down (unless you prevented it yourself)
+* `uncaught-exception` – the `graceful-recovery` module caught an exception that was not handled, giving you can option to store a snapshot before shutting down (unless you prevented it yourself)
 
 
 ### recovery
